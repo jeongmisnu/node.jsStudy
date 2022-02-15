@@ -6,6 +6,7 @@ node.js 연습 블로그 만들기
 - mongoose (mongoDB)
 - cors
 - pm2
+- nodemon
 
 ## 기능
 1. 전체 게시글 목록 조회
