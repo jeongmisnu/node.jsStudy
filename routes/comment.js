@@ -1,13 +1,14 @@
 const express = require('express');
 const Comments = require('../schemas/comments');
-const commentIdCount = require('../schemas/commentIdCount');
+const { commentCount } = require('../tools/idCount');
+const { today } = require('../tools/tDate');
 
 const routes = express.Router();
 
 // 댓글 목록 조회
 routes.get('/posts/:post/comments', async (req, res) => {
   const { post } = req.params;
-  const comment = await Comments.find({ postId: post });
+  const comment = await Comments.find({ postId: post }).sort({writeDate: -1});
 
   res.status(200).json({ comment });
 })
@@ -19,21 +20,20 @@ routes.post('/posts/:post/comments', async (req, res) => {
 
 
   // 댓글 아이디 카운터
-  let id = await commentIdCount.find({ postId: Number(post) });
-  console.log(id);
-  if (!id.length) {
-    id = await commentIdCount.create({ postId: Number(post), num: 1 });
-  } else {
-    await commentIdCount.updateOne({ postId: Number(post), num: id[0].num }, { $set: { num: ++id[0].num } });
-    id = await commentIdCount.find({ postId: Number(post) });
-  }
+  const id = await commentCount(post);
 
-  const comment = await Comments.create({ postId: Number(post), commentId: id[0].num, content, authorId });
+  // 날짜
+  const writeDate = today();
+
+  const comment = await Comments.create({ 
+    postId: post, 
+    commentId: id, 
+    content, authorId, 
+    writeDate 
+  });
 
   res.status(200).json({
-    commentId: id,
-    content,
-    authorId
+    comment
   });
 });
 
@@ -45,7 +45,10 @@ routes.put('/posts/:post/:comment', async (req, res) => {
   let boln = false;
 
   if (coment.authorId === authorId) {
-    await Comments.updateOne({ postId: post, commentId: comment }, { $set: { content } });
+    await Comments.updateOne(
+      { postId: post, commentId: comment }, 
+      { $set: { content } }
+      );
     boln = true;
   }
 

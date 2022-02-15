@@ -5,6 +5,7 @@ const commentschema = mongoose.Schema({
   commentId: Number,
   content: String,
   authorId: String,
+  writeDate: String,
 });
 
 module.exports = mongoose.model('Comments', commentschema);

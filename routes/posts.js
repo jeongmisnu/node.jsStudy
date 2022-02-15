@@ -3,6 +3,7 @@ const Posts = require('../schemas/posts');
 const Comments = require('../schemas/comments');
 const commentIdCount = require('../schemas/commentIdCount');
 const idCount = require('../tools/idCount');
+const { today } = require('../tools/tDate');
 
 const routes = express.Router();
 
@@ -10,27 +11,29 @@ const routes = express.Router();
 // 전체 게시글 목록 불러오기
 routes.get('/posts', async (req, res) => {
   const { category } = req.query;
-  const posts = await Posts.find({ category });
+  const posts = await Posts.find({ category }).sort({writeDate: -1});
 
   res.json({
     posts
   });
 });
 
+
 // 게시글 작성
 routes.post('/posts', async (req, res) => {
   const { title, content, authorId } = req.body;
 
   // 날짜 받기
-  let today = new Date();
+  const writeDate = today();
+  // console.log(typeof writeDate)
+
   // id 받기
-  const id = await idCount.postCount();
-  console.log(id);
+  const postId = await idCount.postCount();
+  console.log(postId);
+
+  const post = await Posts.create({ postId, title, content, authorId, writeDate });
 
 
-  const post = await Posts.create({ postId: id, title, content, authorId, writeDate: today });
-
-  console.log(today);
   res.status(201).json({
     post
   });
@@ -43,7 +46,7 @@ routes.get('/posts/:postid', async (req, res) => {
 
   // console.log(post);
 
-  res.status(200).json({ post })
+  res.status(200).json({ post });
 });
 
 // 게시글 수정
@@ -84,6 +87,7 @@ routes.delete('/posts/:postid', async (req, res) => {
     await Comments.deleteMany({ postId: postid });
     await Posts.deleteOne({ postId: postid });
 
+    await idCount.RemoveId(1, postid);
     res.status(200).json({
       success: true,
       message: '삭제가 완료되었습니다.'
