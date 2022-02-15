@@ -1,0 +1,26 @@
+{
+  "name": "node.jsstudy",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jeongmisnu/node.jsStudy.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jeongmisnu/node.jsStudy/issues"
+  },
+  "homepage": "https://github.com/jeongmisnu/node.jsStudy#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.2",
+    "mongoose": "^6.2.1",
+    "pm2": "^5.1.2"
+  }
+}
