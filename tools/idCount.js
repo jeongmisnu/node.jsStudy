@@ -12,7 +12,7 @@ async function recyClingId(mode, num) {
   let id = await RemoveId.find({mode});
   let recyclingId = '';
 
-  console.log(id[0].num);
+  // console.log(id[0].num);
 
   if (!id.length) {
     console.log('ID: 없음');
