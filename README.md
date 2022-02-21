@@ -5,6 +5,7 @@ node.js 연습 블로그 만들기
 - express
 - mongoose (mongoDB)
 - cors
+- express-rate-limit
 - pm2
 - nodemon
 
@@ -64,7 +65,7 @@ node.js 연습 블로그 만들기
     - Method : PUT
     - URL : /api/posts/:post
     - Body : 
-    { title: string, content: string, authorId: string}
+    { title: string, content: string, authorId: string }
 - Respones
     - HTTP Status Code : 201
     - Payload : 

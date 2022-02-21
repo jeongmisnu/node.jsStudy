@@ -29,6 +29,7 @@ async function recyClingId(mode, num) {
 
 }
 
+// 지운 포스트 아이디 값 저장
 exports.RemoveId = async (mode, num) => {
   await RemoveId.create({ mode, num })
 

@@ -7,13 +7,11 @@ const { today } = require('../tools/tDate');
 
 const routes = express.Router();
 
-
 // 전체 게시글 목록 불러오기
 routes.get('/posts', async (req, res) => {
-  const { category } = req.query;
-  const posts = await Posts.find({ category }).sort({writeDate: -1});
+  const posts = await Posts.find({}).sort({writeDate: -1});
 
-  res.json({
+  res.status(200).json({
     posts
   });
 });
@@ -33,16 +31,15 @@ routes.post('/posts', async (req, res) => {
 
   const post = await Posts.create({ postId, title, content, authorId, writeDate });
 
-
   res.status(201).json({
     post
   });
 });
 
 // 게시글 조회
-routes.get('/posts/:postid', async (req, res) => {
-  const { postid } = req.params;
-  const post = await Posts.findOne({ postId: postid });
+routes.get('/posts/:postId', async (req, res) => {
+  const { postId } = req.params;
+  const post = await Posts.findOne({ postId });
 
   // console.log(post);
 
@@ -50,25 +47,21 @@ routes.get('/posts/:postid', async (req, res) => {
 });
 
 // 게시글 수정
-routes.put('/posts/:postid', async (req, res) => {
-  const { postid } = req.params;
+routes.put('/posts/:postId', async (req, res) => {
+  const { postId } = req.params;
   const { title, content, authorId } = req.body;
-  const post = await Posts.findOne({ postId: postid });
-
-  let success = false;
+  const post = await Posts.findOne({ postId });
 
   if (post.authorId === authorId) {
-    await Posts.updateOne({ postId: postid }, { $set: { title, content } });
-
-    success = true;
+    await Posts.updateOne({ postId }, { $set: { title, content } });
 
     res.status(200).json({
-      success,
+      success: true,
       message: '수정되었습니다.'
     });
   } else {
     res.status(200).json({
-      success,
+      success: false,
       message: authorId + '님이 작성한 글이 아닙니다.'
     });
   }
@@ -76,18 +69,18 @@ routes.put('/posts/:postid', async (req, res) => {
 });
 
 // 게시글 삭제
-routes.delete('/posts/:postid', async (req, res) => {
-  const { postid } = req.params;
+routes.delete('/posts/:postId', async (req, res) => {
+  const { postId } = req.params;
   const { authorId } = req.body;
 
-  const post = await Posts.findOne({ postId: postid });
+  const post = await Posts.findOne({ postId });
 
   if (post.authorId === authorId) {
-    await commentIdCount.deleteMany({ postId: postid });
-    await Comments.deleteMany({ postId: postid });
-    await Posts.deleteOne({ postId: postid });
-
-    await idCount.RemoveId(1, postid);
+    await commentIdCount.deleteMany({ postId });
+    await Comments.deleteMany({ postId });
+    await Posts.deleteOne({ postId });
+    await idCount.RemoveId(1, postId);
+    
     res.status(200).json({
       success: true,
       message: '삭제가 완료되었습니다.'
